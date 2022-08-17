@@ -1,0 +1,29 @@
+[package]
+name = "bevy_serialport"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+bevy = { version = "0.8.0", default-features = false }
+bytes = "1.1.0"
+futures = "0.3"
+parking_lot = { version = "0.12" }
+thiserror = "1"
+serialport = { version = "4", default-features = false }
+tokio = { version = "1", features = ["parking_lot", "rt-multi-thread", "sync", "macros", "process", "time", "fs", "io-util"] }
+tokio-util = { version = "0.7.3", features = ["codec"] }
+tokio-serial = "5.4.1"
+
+
+[dev-dependencies]
+clap = { version = "3.2", features = ["derive"] }
+
+[[example]]
+name = "serial_receiver"
+path = "examples/receiver.rs"
+
+[[example]]
+name = "serial_sender"
+path = "examples/sender.rs"
