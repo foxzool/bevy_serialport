@@ -3,7 +3,7 @@ use std::time::Duration;
 use bevy::{app::ScheduleRunnerSettings, log::LogPlugin, prelude::*};
 use clap::Parser;
 
-use bevy_serialport::{Runtime, SerialPortPlugin, SerialResource};
+use bevy_serialport::{Runtime, SerialData, SerialPortPlugin, SerialResource};
 
 #[derive(Parser, Debug)]
 #[clap(author, version, about, long_about = None)]
@@ -37,11 +37,10 @@ fn setup(cmd_args: Res<Args>, mut serial_res: ResMut<SerialResource>, rt: Res<Ru
         .expect("open serial port error");
 }
 
-fn receive(mut serial_res: ResMut<SerialResource>, cmd_args: Res<Args>) {
-    let messages = serial_res.view_messages(&cmd_args.port);
-
-    for message in messages {
+/// receive data and send back
+fn receive(mut serial_res: ResMut<SerialResource>, mut serial_ev: EventReader<SerialData>) {
+    for message in serial_ev.iter() {
         info!("receive {:?}", message);
-        serial_res.send_message(&cmd_args.port, message);
+        serial_res.send_message(&message.port, message.data.clone());
     }
 }

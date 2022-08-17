@@ -4,7 +4,6 @@ use std::sync::Arc;
 use bevy::prelude::*;
 use bytes::Bytes;
 use parking_lot::Mutex;
-use serialport::SerialPortBuilder;
 use tokio::runtime::Builder;
 
 pub mod codec;
@@ -19,10 +18,18 @@ pub struct SerialPortPlugin;
 impl Plugin for SerialPortPlugin {
     fn build(&self, app: &mut App) {
         let tokio_rt = Arc::new(Builder::new_multi_thread().enable_all().build().unwrap());
-        app.insert_resource(tokio_rt);
+        app.insert_resource(tokio_rt)
+            .init_resource::<SerialResource>()
+            .add_event::<SerialData>();
 
-        app.init_resource::<SerialResource>();
+        app.add_system_to_stage(CoreStage::PreUpdate, broadcast_serial_message);
     }
+}
+
+#[derive(Debug)]
+pub struct SerialData {
+    pub port: String,
+    pub data: Bytes,
 }
 
 pub type Runtime = Arc<tokio::runtime::Runtime>;
@@ -66,16 +73,6 @@ impl SerialResource {
         Ok(())
     }
 
-    pub fn view_messages(&mut self, port: &str) -> Vec<Bytes> {
-        let mut messages = Vec::new();
-        if let Some(serial_wrap) = self.ports.get_mut(port) {
-            let mut serial_messages: Vec<Bytes> = serial_wrap.get_messages();
-            messages.append(&mut serial_messages);
-        }
-
-        messages
-    }
-
     pub fn send_message(&mut self, port: &str, message: Bytes) {
         if let Some(serial_wrap) = self.ports.get_mut(port) {
             if let Err(err) = serial_wrap.msg_sender.lock().send(message) {
@@ -83,4 +80,26 @@ impl SerialResource {
             }
         }
     }
+}
+
+fn broadcast_serial_message(
+    mut serial_res: ResMut<SerialResource>,
+    mut message_ev: EventWriter<SerialData>,
+) {
+    let mut messages: Vec<SerialData> = Vec::new();
+
+    for (port_name, port_wrap) in serial_res.ports.iter_mut() {
+        let mut serial_messages: Vec<SerialData> = port_wrap
+            .get_messages()
+            .into_iter()
+            .map(|m| SerialData {
+                port: port_name.clone(),
+                data: m,
+            })
+            .collect();
+
+        messages.append(&mut serial_messages);
+    }
+
+    message_ev.send_batch(messages.into_iter());
 }
