@@ -1,3 +1,5 @@
+[![crates.io](https://img.shields.io/crates/v/bevy_serialport)](https://crates.io/crates/bevy_serialport)
+
 # bevy_serialport
 `bevy_serialport` is a plugin for add async serial port support for bevy.
 
