@@ -4,7 +4,10 @@ use bevy::{app::ScheduleRunnerSettings, log::LogPlugin, prelude::*};
 use bytes::Bytes;
 use clap::Parser;
 
-use bevy_serialport::{Runtime, SerialPortPlugin, SerialResource};
+use bevy_serialport::{
+    DataBits, FlowControl, Parity, Runtime, SerialPortPlugin, SerialPortSetting, SerialResource,
+    StopBits,
+};
 
 #[derive(Parser, Debug)]
 #[clap(author, version, about, long_about = None)]
@@ -34,8 +37,17 @@ fn main() {
 }
 
 fn setup(cmd_args: Res<Args>, mut serial_res: ResMut<SerialResource>, rt: Res<Runtime>) {
+    let serial_setting = SerialPortSetting {
+        port_name: cmd_args.port.clone(),
+        baud_rate: cmd_args.rate,
+        data_bits: DataBits::Five,
+        flow_control: FlowControl::None,
+        parity: Parity::None,
+        stop_bits: StopBits::One,
+        timeout: Default::default(),
+    };
     serial_res
-        .open(rt.clone(), &cmd_args.port, cmd_args.rate)
+        .open_with_setting(rt.clone(), serial_setting)
         .expect("open serial port error");
 }
 

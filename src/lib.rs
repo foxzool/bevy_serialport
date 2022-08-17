@@ -4,6 +4,7 @@ use std::sync::Arc;
 use bevy::prelude::*;
 use bytes::Bytes;
 use parking_lot::Mutex;
+use serialport::SerialPortBuilder;
 use tokio::runtime::Builder;
 
 pub mod codec;
@@ -11,6 +12,7 @@ mod error;
 mod serial_wrap;
 pub use error::SerialError;
 pub use serial_wrap::*;
+pub use serialport::{DataBits, FlowControl, Parity, StopBits};
 
 pub struct SerialPortPlugin;
 
@@ -36,12 +38,30 @@ impl SerialResource {
     pub fn open(
         &mut self,
         task_pool: Runtime,
-        port: &str,
+        port: impl ToString,
         baud_rate: u32,
     ) -> Result<(), SerialError> {
-        let client = SerialPortWrap::new(task_pool, port, baud_rate)?;
+        let setting = SerialPortSetting {
+            port_name: port.to_string(),
+            baud_rate,
+            ..default()
+        };
+        let client = SerialPortWrap::new(task_pool, setting)?;
 
         self.ports.insert(port.to_string(), client);
+
+        Ok(())
+    }
+
+    pub fn open_with_setting(
+        &mut self,
+        task_pool: Runtime,
+        setting: SerialPortSetting,
+    ) -> Result<(), SerialError> {
+        let port_name = setting.port_name.clone();
+        let serial_port = SerialPortWrap::new(task_pool, setting)?;
+
+        self.ports.insert(port_name, serial_port);
 
         Ok(())
     }
