@@ -12,7 +12,7 @@ use tokio::sync::mpsc::{unbounded_channel, UnboundedSender};
 use tokio_serial::{SerialPortBuilderExt, SerialStream};
 use tokio_util::codec::{Decoder, Framed};
 
-use crate::{codec::RawCodec, error, error::SerialError, RecvQueue, Runtime};
+use crate::{codec::RawCodec, error, error::SerialError, ArcRuntime, RecvQueue};
 
 /// settings for initialize serial port
 #[derive(Debug)]
@@ -53,7 +53,7 @@ pub struct SerialPortWrap {
 }
 
 impl SerialPortWrap {
-    pub fn new(task_pool: Runtime, setting: SerialPortSetting) -> Result<Self, SerialError> {
+    pub fn new(task_pool: ArcRuntime, setting: SerialPortSetting) -> Result<Self, SerialError> {
         let recv_queue = Arc::new(Mutex::new(Vec::new()));
 
         let pool_clone = task_pool.clone();

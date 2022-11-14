@@ -5,11 +5,11 @@ use bytes::Bytes;
 use clap::Parser;
 
 use bevy_serialport::{
-    DataBits, FlowControl, Parity, Runtime, SerialData, SerialPortPlugin, SerialPortSetting,
-    SerialResource, StopBits,
+    DataBits, FlowControl, Parity, SerialData, SerialPortPlugin, SerialPortRuntime,
+    SerialPortSetting, SerialResource, StopBits,
 };
 
-#[derive(Parser, Debug)]
+#[derive(Parser, Resource, Debug)]
 #[clap(author, version, about, long_about = None)]
 struct Args {
     /// Name of the person to greet
@@ -26,8 +26,7 @@ fn main() {
 
     App::new()
         .insert_resource(ScheduleRunnerSettings::run_loop(Duration::from_millis(10)))
-        .add_plugin(LogPlugin)
-        .add_plugins(MinimalPlugins)
+        .add_plugins(MinimalPlugins.set(LogPlugin { ..default() }))
         .add_plugin(SerialPortPlugin)
         .insert_resource(args)
         .add_startup_system(setup)
@@ -36,7 +35,7 @@ fn main() {
         .run()
 }
 
-fn setup(cmd_args: Res<Args>, mut serial_res: ResMut<SerialResource>, rt: Res<Runtime>) {
+fn setup(cmd_args: Res<Args>, mut serial_res: ResMut<SerialResource>, rt: Res<SerialPortRuntime>) {
     let serial_setting = SerialPortSetting {
         port_name: cmd_args.port.clone(),
         baud_rate: cmd_args.rate,

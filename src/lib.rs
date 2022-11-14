@@ -17,7 +17,9 @@ pub struct SerialPortPlugin;
 
 impl Plugin for SerialPortPlugin {
     fn build(&self, app: &mut App) {
-        let tokio_rt = Arc::new(Builder::new_multi_thread().enable_all().build().unwrap());
+        let tokio_rt = SerialPortRuntime(Arc::new(
+            Builder::new_multi_thread().enable_all().build().unwrap(),
+        ));
         app.insert_resource(tokio_rt)
             .init_resource::<SerialResource>()
             .add_event::<SerialData>();
@@ -32,11 +34,13 @@ pub struct SerialData {
     pub data: Bytes,
 }
 
-pub type Runtime = Arc<tokio::runtime::Runtime>;
+#[derive(Resource, Deref, DerefMut)]
+pub struct SerialPortRuntime(Arc<tokio::runtime::Runtime>);
+pub type ArcRuntime = Arc<tokio::runtime::Runtime>;
 pub type RecvQueue = Arc<Mutex<Vec<Bytes>>>;
 
 /// serial port resource
-#[derive(Default)]
+#[derive(Default, Resource)]
 pub struct SerialResource {
     pub ports: BTreeMap<String, SerialPortWrap>,
 }
@@ -44,7 +48,7 @@ pub struct SerialResource {
 impl SerialResource {
     pub fn open(
         &mut self,
-        task_pool: Runtime,
+        task_pool: ArcRuntime,
         port: impl ToString,
         baud_rate: u32,
     ) -> Result<(), SerialError> {
@@ -62,7 +66,7 @@ impl SerialResource {
 
     pub fn open_with_setting(
         &mut self,
-        task_pool: Runtime,
+        task_pool: ArcRuntime,
         setting: SerialPortSetting,
     ) -> Result<(), SerialError> {
         let port_name = setting.port_name.clone();

@@ -1,11 +1,11 @@
 use std::time::Duration;
 
-use bevy::{app::ScheduleRunnerSettings, log::LogPlugin, prelude::*};
+use bevy::{app::ScheduleRunnerSettings, prelude::*};
 use clap::Parser;
 
-use bevy_serialport::{Runtime, SerialData, SerialPortPlugin, SerialResource};
+use bevy_serialport::{SerialData, SerialPortPlugin, SerialPortRuntime, SerialResource};
 
-#[derive(Parser, Debug)]
+#[derive(Parser, Resource, Debug)]
 #[clap(author, version, about, long_about = None)]
 struct Args {
     /// Name of the person to greet
@@ -22,8 +22,7 @@ fn main() {
 
     App::new()
         .insert_resource(ScheduleRunnerSettings::run_loop(Duration::from_millis(16)))
-        .add_plugin(LogPlugin)
-        .add_plugins(MinimalPlugins)
+        .add_plugins(MinimalPlugins.set(bevy::log::LogPlugin { ..default() }))
         .add_plugin(SerialPortPlugin)
         .insert_resource(args)
         .add_startup_system(setup)
@@ -31,7 +30,7 @@ fn main() {
         .run()
 }
 
-fn setup(cmd_args: Res<Args>, mut serial_res: ResMut<SerialResource>, rt: Res<Runtime>) {
+fn setup(cmd_args: Res<Args>, mut serial_res: ResMut<SerialResource>, rt: Res<SerialPortRuntime>) {
     serial_res
         .open(rt.clone(), &cmd_args.port, cmd_args.rate)
         .expect("open serial port error");

@@ -69,3 +69,11 @@ Dual-licensed under either
 
 - MIT
 - Apache 2.0
+
+## Bevy support table
+
+
+| bevy | bevy_egui |
+|------|-----------|
+| 0.9  | 0.2       |
+| 0.8  | 0.1       |
