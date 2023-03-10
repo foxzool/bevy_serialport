@@ -22,9 +22,8 @@ impl Plugin for SerialPortPlugin {
         ));
         app.insert_resource(tokio_rt)
             .init_resource::<SerialResource>()
-            .add_event::<SerialData>();
-
-        app.add_system_to_stage(CoreStage::PreUpdate, broadcast_serial_message);
+            .add_event::<SerialData>()
+            .add_system(broadcast_serial_message.in_base_set(CoreSet::PreUpdate));
     }
 }
 

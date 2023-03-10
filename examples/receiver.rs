@@ -1,5 +1,6 @@
 use std::time::Duration;
 
+use bevy::log::LogPlugin;
 use bevy::{app::ScheduleRunnerSettings, prelude::*};
 use clap::Parser;
 
@@ -22,7 +23,8 @@ fn main() {
 
     App::new()
         .insert_resource(ScheduleRunnerSettings::run_loop(Duration::from_millis(16)))
-        .add_plugins(MinimalPlugins.set(bevy::log::LogPlugin { ..default() }))
+        .add_plugins(MinimalPlugins)
+        .add_plugin(LogPlugin::default())
         .add_plugin(SerialPortPlugin)
         .insert_resource(args)
         .add_startup_system(setup)

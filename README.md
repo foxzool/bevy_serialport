@@ -61,6 +61,8 @@ fn send_test_data(mut serial_res: ResMut<SerialResource>) {
 
 | bevy | bevy_serialport |
 |------|-----------------|
+| 0.10 | 0.3             |
+| 0.9  | 0.2             |
 | 0.8  | 0.1             |
 
 ## License
@@ -69,11 +71,3 @@ Dual-licensed under either
 
 - MIT
 - Apache 2.0
-
-## Bevy support table
-
-
-| bevy | bevy_egui |
-|------|-----------|
-| 0.9  | 0.2       |
-| 0.8  | 0.1       |
