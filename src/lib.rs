@@ -23,11 +23,11 @@ impl Plugin for SerialPortPlugin {
         app.insert_resource(tokio_rt)
             .init_resource::<SerialResource>()
             .add_event::<SerialData>()
-            .add_system(broadcast_serial_message.in_base_set(CoreSet::PreUpdate));
+            .add_systems(PreUpdate, broadcast_serial_message);
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Event)]
 pub struct SerialData {
     pub port: String,
     pub data: Bytes,
@@ -104,5 +104,5 @@ fn broadcast_serial_message(
         messages.append(&mut serial_messages);
     }
 
-    message_ev.send_batch(messages.into_iter());
+    message_ev.send_batch(messages);
 }

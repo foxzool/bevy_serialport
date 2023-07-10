@@ -1,6 +1,8 @@
+use bevy::app::ScheduleRunnerPlugin;
+use bevy::log::LogPlugin;
 use std::time::Duration;
 
-use bevy::{app::ScheduleRunnerSettings, log::LogPlugin, prelude::*};
+use bevy::prelude::*;
 use bytes::Bytes;
 use clap::Parser;
 
@@ -25,14 +27,16 @@ fn main() {
     let args = Args::parse();
 
     App::new()
-        .insert_resource(ScheduleRunnerSettings::run_loop(Duration::from_millis(10)))
-        .add_plugins(MinimalPlugins)
-        .add_plugin(LogPlugin::default())
-        .add_plugin(SerialPortPlugin)
+        .add_plugins((
+            MinimalPlugins.set(ScheduleRunnerPlugin::run_loop(Duration::from_secs_f64(
+                1.0 / 60.0,
+            ))),
+            LogPlugin::default(),
+            SerialPortPlugin,
+        ))
         .insert_resource(args)
-        .add_startup_system(setup)
-        .add_system(receive)
-        .add_system(send_test_data)
+        .add_systems(Startup, setup)
+        .add_systems(Update, (receive, send_test_data))
         .run()
 }
 
