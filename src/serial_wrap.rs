@@ -1,3 +1,4 @@
+use bevy::log::error;
 use std::sync::Arc;
 use std::time::Duration;
 
@@ -12,7 +13,7 @@ use tokio::sync::mpsc::{unbounded_channel, UnboundedSender};
 use tokio_serial::{SerialPortBuilderExt, SerialStream};
 use tokio_util::codec::{Decoder, Framed};
 
-use crate::{codec::RawCodec, error, error::SerialError, ArcRuntime, RecvQueue};
+use crate::{codec::RawCodec, error::SerialError, ArcRuntime, RecvQueue};
 
 /// settings for initialize serial port
 #[derive(Debug)]

@@ -56,7 +56,7 @@ fn setup(cmd_args: Res<Args>, mut serial_res: ResMut<SerialResource>, rt: Res<Se
 }
 
 fn receive(mut serial_ev: EventReader<SerialData>) {
-    for message in serial_ev.iter() {
+    for message in serial_ev.read() {
         info!("receive {:?}", message);
     }
 }

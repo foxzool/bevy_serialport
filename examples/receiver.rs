@@ -44,7 +44,7 @@ fn setup(cmd_args: Res<Args>, mut serial_res: ResMut<SerialResource>, rt: Res<Se
 
 /// receive data and send back
 fn receive(mut serial_res: ResMut<SerialResource>, mut serial_ev: EventReader<SerialData>) {
-    for message in serial_ev.iter() {
+    for message in serial_ev.read() {
         info!("receive {:?}", message);
         serial_res.send_message(&message.port, message.data.clone());
     }
