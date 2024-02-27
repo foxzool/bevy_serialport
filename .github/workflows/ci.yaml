@@ -1,0 +1,62 @@
+# Adapted from https://github.com/serialport/serialport-rs/blob/main/.github/workflows/ci.yaml
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+  workflow_dispatch:
+
+jobs:
+  # --------------------------------------------------------------------------
+  # LINT
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Lint | install dependencies
+        run: |
+          sudo sed -i 's/azure.archive.ubuntu.com/archive.ubuntu.com/' /etc/apt/sources.list
+          sudo apt-get -qq update
+          sudo apt install -qq -y libudev-dev
+
+      - name: Lint | checkout
+        uses: actions/checkout@v2
+
+      - name: Lint | install toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          default: true
+          components: clippy, rustfmt
+
+      - name: Lint | rust-cache
+        uses: Swatinem/rust-cache@v1
+
+      - name: Lint | check formatting
+        uses: actions-rs/cargo@v1
+        with:
+          command: fmt
+          args: -- --check
+
+      - name: Lint | clippy
+        uses: actions-rs/cargo@v1
+        with:
+          command: clippy
+          args: --all-targets --all-features
+
+  # --------------------------------------------------------------------------
+  # BUILD
+  x86_64-pc-windows-msvc:
+    uses: ./.github/workflows/build.yaml
+    with:
+      runs_on: windows-2019
+      target: x86_64-pc-windows-msvc
+
+  x86_64-unknown-linux-gnu:
+    uses: ./.github/workflows/build.yaml
+    with:
+      extra_packages: libudev-dev
+      target: x86_64-unknown-linux-gnu
