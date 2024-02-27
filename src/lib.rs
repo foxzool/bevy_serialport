@@ -106,3 +106,19 @@ fn broadcast_serial_message(
 
     message_ev.send_batch(messages);
 }
+
+#[cfg(test)]
+mod unit_tests {
+    use crate::SerialPortPlugin;
+    use bevy::prelude::{App, MinimalPlugins};
+
+    /// This tests that we have properly set up the System parameters used in our systems, but
+    /// doesn't test the 'real' functionality of the plugin.
+    #[test]
+    fn smoke_test_basic_integration_with_bevy_app() {
+        let mut app = App::new();
+        app.add_plugins((MinimalPlugins, SerialPortPlugin));
+        app.update();
+        app.update();
+    }
+}
