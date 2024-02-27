@@ -54,9 +54,10 @@ jobs:
     with:
       runs_on: windows-2019
       target: x86_64-pc-windows-msvc
+      testspec: unit_tests
 
   x86_64-unknown-linux-gnu:
     uses: ./.github/workflows/build.yaml
     with:
-      extra_packages: libudev-dev
+      extra_packages: libudev-dev socat
       target: x86_64-unknown-linux-gnu
