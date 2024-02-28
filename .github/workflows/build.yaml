@@ -1,0 +1,79 @@
+# Adapted from: https://github.com/serialport/serialport-rs/blob/main/.github/workflows/build.yaml
+name: Build
+
+on:
+  workflow_call:
+    inputs:
+      disable_tests:
+        type: boolean
+        description: "If set to `true`, we will only ensure that the package builds, and skip running tests"
+      extra_packages:
+        description: "Extra packages to install before compiling and running tests"
+        type: string
+      runs_on:
+        default: ubuntu-latest
+        type: string
+      target:
+        description: "Rustc target: https://doc.rust-lang.org/rustc/targets/index.html"
+        required: true
+        type: string
+      toolchain:
+        default: nightly  # Bevy requires the nightly toolchain
+        type: string
+        description: "Rustup build toolchain: https://rust-lang.github.io/rustup/concepts/toolchains.html"
+      testspec:
+        description: "We execute `cargo test <testspec> ...` to run a subset of tests. The empty string (default) runs all tests"
+        default: ""
+        type: string
+
+env:
+  # Pretty cargo output!
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: 1
+
+jobs:
+  build:
+    runs-on: ${{ inputs.runs_on }}
+    steps:
+      - name: Build | install dependencies
+        if: inputs.runs_on == 'ubuntu-latest'
+        run: |
+          sudo sed -i 's/azure.archive.ubuntu.com/archive.ubuntu.com/' /etc/apt/sources.list
+          sudo apt-get -qq update
+          sudo apt-get -qq -y install build-essential curl git pkg-config ${{ inputs.extra_packages }}
+
+      - name: Build | add mingw32 to path
+        if: inputs.runs_on == 'windows-2019'
+        shell: bash
+        run: |
+          echo "C:\msys64\mingw32\bin" >> $GITHUB_PATH
+
+      - name: Build | checkout
+        uses: actions/checkout@v2
+
+      - name: Build | install toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          target: ${{ inputs.target }}
+          toolchain: ${{ inputs.toolchain }}
+          default: true
+
+      - name: Build | rust-cache
+        uses: Swatinem/rust-cache@v1
+
+      - name: Build | build library (default features)
+        uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: --target=${{ inputs.target }}
+
+      - name: Build | build examples (all features)
+        run: cargo build --examples --all-features --target=${{ inputs.target }}
+
+      - name: Build | build tests (all features)
+        run: cargo build --tests --all-features --target=${{ inputs.target }}
+
+      - name: Build | run tests (all features)
+        if: ${{ inputs.disable_tests == false }}
+        run: cargo test --all-features --target=${{ inputs.target }} ${{ inputs.tespec }} -- --nocapture
