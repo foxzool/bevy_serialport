@@ -16,8 +16,9 @@ fn test_receive_bytes_send_through_serial_port_from_bevy_app() -> Result<(), Str
     run_in_background_with_deadline(std::time::Duration::from_millis(2000), || {
         with_local_serial_connected_ports(|serial_port_name, serial_port_name2: String| {
             let mut app = App::new();
-            // The app should only update for 10 ticks before exiting gracefully or panicing. Typically
-            // calling .run() will never return, which is bad for a test and CI.
+            // The app should only update for 10 ticks before exiting gracefully or panicing.
+            // Typically calling .run() will never return, which is bad for a test and
+            // CI.
             app.add_plugins((MinimalPlugins, SerialPortPlugin))
                 .insert_resource(TestPTTYPortNames {
                     sender: String::from(serial_port_name),
@@ -37,14 +38,17 @@ fn test_receive_bytes_send_through_serial_port_from_bevy_app() -> Result<(), Str
 /// A simple bevy app that: sends data to a serial port, exits if that data is received within 10
 /// update "ticks" , and panics otherwise.
 mod receive_or_panic_bevy_app_impl {
-    use bevy::app::AppExit;
-    use bevy::prelude::{EventReader, EventWriter, Local, Res, ResMut, Resource};
-    use bevy::utils::tracing::info;
+    use bevy::{
+        app::AppExit,
+        prelude::{EventReader, EventWriter, Local, Res, ResMut, Resource},
+        utils::tracing::info,
+    };
     use bevy_serialport::{
         DataBits, FlowControl, Parity, SerialData, SerialPortRuntime, SerialPortSetting,
         SerialResource, StopBits,
     };
     use bytes::Bytes;
+    use std::num::NonZero;
     #[derive(Debug, Resource)]
     pub(super) struct TestPTTYPortNames {
         pub sender: String,
@@ -65,7 +69,8 @@ mod receive_or_panic_bevy_app_impl {
         }
         for message in serial_ev.read().filter(|x| x.port == port_names.receiver) {
             info!("receive {:?}", message);
-            shutdown_writer.send(AppExit); // Exit the app gracefully to pass the test
+            // Exit the app gracefully to pass the test
+            shutdown_writer.send(AppExit::Error(NonZero::new(100).unwrap()));
         }
     }
 
@@ -114,10 +119,7 @@ mod receive_or_panic_bevy_app_impl {
 
 #[cfg(target_os = "linux")] // Whatever linux-specific hacks I need to get tests to work
 mod internal_nonsense {
-    use std::panic::UnwindSafe;
-    use std::sync::mpsc;
-    use std::thread;
-    use std::time::Duration;
+    use std::{panic::UnwindSafe, sync::mpsc, thread, time::Duration};
     use tempdir::TempDir;
     pub(super) type TimeoutError = String;
     pub(super) type TimeoutResult<T> = Result<T, TimeoutError>;
