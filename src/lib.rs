@@ -1,5 +1,6 @@
-use std::collections::BTreeMap;
-use std::sync::Arc;
+#![doc = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/README.md"))]
+
+use std::{collections::BTreeMap, sync::Arc};
 
 use bevy::prelude::*;
 use bytes::Bytes;

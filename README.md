@@ -1,6 +1,10 @@
-[![crates.io](https://img.shields.io/crates/v/bevy_serialport)](https://crates.io/crates/bevy_serialport)
-
 # bevy_serialport
+
+[![Crates.io](https://img.shields.io/crates/v/bevy_serialport)](https://crates.io/crates/bevy_serialport)
+[![Downloads](https://img.shields.io/crates/d/bevy_serialport)](https://crates.io/crates/bevy_serialport)
+[![Documentation](https://docs.rs/bevy_serialport/badge.svg)](https://docs.rs/bevy_serialport)
+[![MIT/Apache 2.0](https://img.shields.io/badge/license-MIT%2FApache-blue.svg)](https://github.com/Seldom-SE/seldom_pixel#license)
+
 `bevy_serialport` is a plugin for add async serial port support for bevy.
 
 ## Usage
@@ -26,7 +30,7 @@ fn main() {
         .add_startup_system(setup)
         .add_system(receive)
         .add_system(send_test_data)
-        .run()
+        .run();
 }
 
 fn setup(cmd_args: Res<Args>, mut serial_res: ResMut<SerialResource>, rt: Res<Runtime>) {
@@ -55,7 +59,6 @@ fn send_test_data(mut serial_res: ResMut<SerialResource>) {
 }
 
 ```
-
 
 ## Supported Versions
 
