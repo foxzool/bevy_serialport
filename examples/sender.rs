@@ -1,5 +1,4 @@
-use bevy::app::ScheduleRunnerPlugin;
-use bevy::log::LogPlugin;
+use bevy::{app::ScheduleRunnerPlugin, log::LogPlugin};
 use std::time::Duration;
 
 use bevy::prelude::*;
@@ -37,7 +36,7 @@ fn main() {
         .insert_resource(args)
         .add_systems(Startup, setup)
         .add_systems(Update, (receive, send_test_data))
-        .run()
+        .run();
 }
 
 fn setup(cmd_args: Res<Args>, mut serial_res: ResMut<SerialResource>, rt: Res<SerialPortRuntime>) {
