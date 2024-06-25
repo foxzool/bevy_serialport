@@ -9,34 +9,38 @@
 
 ## Usage
 
-``` rust
+``` no_run
+use bevy::{app::ScheduleRunnerPlugin, log::LogPlugin};
 use std::time::Duration;
 
-use bevy::{app::ScheduleRunnerSettings, log::LogPlugin, prelude::*};
+use bevy::prelude::*;
 use bytes::Bytes;
 
+
 use bevy_serialport::{
-    DataBits, FlowControl, Parity, Runtime, SerialData, SerialPortPlugin, SerialPortSetting,
-    SerialResource, StopBits,
+    DataBits, FlowControl, Parity, SerialData, SerialPortPlugin, SerialPortRuntime,
+    SerialPortSetting, SerialResource, StopBits,
 };
 
 
 fn main() {
     App::new()
-        .insert_resource(ScheduleRunnerSettings::run_loop(Duration::from_millis(10)))
-        .add_plugin(LogPlugin)
-        .add_plugins(MinimalPlugins)
-        .add_plugin(SerialPortPlugin)
-        .add_startup_system(setup)
-        .add_system(receive)
-        .add_system(send_test_data)
+        .add_plugins((
+            MinimalPlugins.set(ScheduleRunnerPlugin::run_loop(Duration::from_secs_f64(
+                1.0 / 60.0,
+            ))),
+            LogPlugin::default(),
+            SerialPortPlugin,
+        ))
+        .add_systems(Startup, setup)
+        .add_systems(Update, (receive, send_test_data))
         .run();
 }
 
-fn setup(cmd_args: Res<Args>, mut serial_res: ResMut<SerialResource>, rt: Res<Runtime>) {
+fn setup(mut serial_res: ResMut<SerialResource>, rt: Res<SerialPortRuntime>) {
     let serial_setting = SerialPortSetting {
         port_name: "COM1".to_string(),
-        baud_rate: 115200,
+        baud_rate: 115_200,
         data_bits: DataBits::Five,
         flow_control: FlowControl::None,
         parity: Parity::None,
@@ -49,7 +53,7 @@ fn setup(cmd_args: Res<Args>, mut serial_res: ResMut<SerialResource>, rt: Res<Ru
 }
 
 fn receive(mut serial_ev: EventReader<SerialData>) {
-    for message in serial_ev.iter() {
+    for message in serial_ev.read() {
         info!("receive {:?}", message);
     }
 }
@@ -64,6 +68,7 @@ fn send_test_data(mut serial_res: ResMut<SerialResource>) {
 
 | bevy | bevy_serialport |
 |------|-----------------|
+| 0.14 | 0.14            |
 | 0.13 | 0.6             |
 | 0.12 | 0.5             |
 | 0.11 | 0.4             |
