@@ -37,6 +37,7 @@ fn test_receive_bytes_send_through_serial_port_from_bevy_app() -> Result<(), Str
 
 /// A simple bevy app that: sends data to a serial port, exits if that data is received within 10
 /// update "ticks" , and panics otherwise.
+#[cfg(target_os = "linux")]
 mod receive_or_panic_bevy_app_impl {
     use bevy::{
         app::AppExit,

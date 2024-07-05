@@ -5,15 +5,16 @@ use std::{collections::BTreeMap, sync::Arc};
 use bevy::prelude::*;
 use bytes::Bytes;
 use parking_lot::Mutex;
+pub use serialport::{DataBits, FlowControl, Parity, StopBits};
 use tokio::runtime::Builder;
+
+pub use error::SerialError;
+pub use serial_wrap::*;
 
 pub mod codec;
 mod error;
 mod serial_wrap;
-pub use error::SerialError;
-pub use serial_wrap::*;
-pub use serialport::{DataBits, FlowControl, Parity, StopBits};
-
+/// Serial port plugin
 pub struct SerialPortPlugin;
 
 impl Plugin for SerialPortPlugin {
@@ -110,8 +111,9 @@ fn broadcast_serial_message(
 
 #[cfg(test)]
 mod unit_tests {
-    use crate::SerialPortPlugin;
     use bevy::prelude::{App, MinimalPlugins};
+
+    use crate::SerialPortPlugin;
 
     /// This tests that we have properly set up the System parameters used in our systems, but
     /// doesn't test the 'real' functionality of the plugin.
