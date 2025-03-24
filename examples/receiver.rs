@@ -1,6 +1,7 @@
 use std::time::Duration;
 
-use bevy::{app::ScheduleRunnerPlugin, log::LogPlugin, prelude::*};
+use bevy::{app::ScheduleRunnerPlugin, prelude::*};
+use bevy_log::{info, LogPlugin};
 use clap::Parser;
 
 use bevy_serialport::{SerialData, SerialPortPlugin, SerialPortRuntime, SerialResource};

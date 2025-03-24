@@ -1,7 +1,9 @@
-use bevy::{app::ScheduleRunnerPlugin, log::LogPlugin};
+use bevy_log::info;
+use bevy::app::ScheduleRunnerPlugin;
 use std::time::Duration;
 
 use bevy::prelude::*;
+use bevy_log::LogPlugin;
 use bytes::Bytes;
 use clap::Parser;
 

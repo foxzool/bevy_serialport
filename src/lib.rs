@@ -110,7 +110,7 @@ fn broadcast_serial_message(
         messages.append(&mut serial_messages);
     }
 
-    message_ev.send_batch(messages);
+    message_ev.write_batch(messages);
 }
 
 #[cfg(test)]
