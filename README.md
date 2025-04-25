@@ -68,6 +68,7 @@ fn send_test_data(mut serial_res: ResMut<SerialResource>) {
 
 | bevy | bevy_serialport |
 |------|-----------------|
+| 0.16 | 0.9             |
 | 0.15 | 0.8             |
 | 0.14 | 0.7             |
 | 0.13 | 0.6             |
@@ -79,7 +80,12 @@ fn send_test_data(mut serial_res: ResMut<SerialResource>) {
 
 ## License
 
-Dual-licensed under either
+Dual-licensed under either:
 
-- MIT
-- Apache 2.0
+- [`MIT`](LICENSE-MIT): [http://opensource.org/licenses/MIT](http://opensource.org/licenses/MIT)
+- [`Apache 2.0`](LICENSE-APACHE): [http://www.apache.org/licenses/LICENSE-2.0](http://www.apache.org/licenses/LICENSE-2.0)
+
+At your option. This means that when using this crate in your game, you may choose which license to use.
+
+Unless you explicitly state otherwise, any contribution intentionally submitted for inclusion in the work by you, as
+defined in the Apache-2.0 license, shall be dually licensed as above, without any additional terms or conditions.
