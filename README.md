@@ -9,19 +9,15 @@
 
 ## Usage
 
-``` no_run
-use bevy::{app::ScheduleRunnerPlugin, log::LogPlugin};
+```rust,no_run
+use bevy::{app::ScheduleRunnerPlugin, log::LogPlugin, prelude::*};
 use std::time::Duration;
-
-use bevy::prelude::*;
 use bytes::Bytes;
-
 
 use bevy_serialport::{
     DataBits, FlowControl, Parity, SerialData, SerialPortPlugin, SerialPortRuntime,
     SerialPortSetting, SerialResource, StopBits,
 };
-
 
 fn main() {
     App::new()
@@ -38,30 +34,32 @@ fn main() {
 }
 
 fn setup(mut serial_res: ResMut<SerialResource>, rt: Res<SerialPortRuntime>) {
-    let serial_setting = SerialPortSetting {
-        port_name: "COM1".to_string(),
-        baud_rate: 115_200,
-        data_bits: DataBits::Five,
-        flow_control: FlowControl::None,
-        parity: Parity::None,
-        stop_bits: StopBits::One,
-        timeout: Default::default(),
-    };
-    serial_res
-        .open_with_setting(rt.clone(), serial_setting)
-        .expect("open serial port error");
+    // Using builder pattern for cleaner configuration
+    let serial_setting = SerialPortSetting::new("COM1", 115_200)
+        .with_data_bits(DataBits::Eight)
+        .with_flow_control(FlowControl::None)
+        .with_parity(Parity::None)
+        .with_stop_bits(StopBits::One);
+    
+    match serial_res.open_with_setting(rt.clone(), serial_setting) {
+        Ok(_) => info!("Successfully opened serial port"),
+        Err(e) => error!("Failed to open serial port: {}", e),
+    }
 }
 
 fn receive(mut serial_ev: EventReader<SerialData>) {
     for message in serial_ev.read() {
-        info!("receive {:?}", message);
+        // Enhanced API with convenient string conversion
+        info!("Received from {}: {}", message.port, message.as_string_lossy());
     }
 }
 
 fn send_test_data(mut serial_res: ResMut<SerialResource>) {
-    serial_res.send_message("COM1", Bytes::from(&b"123457"[..]))
+    // Better error handling and convenient string method
+    if let Err(e) = serial_res.send_string("COM1", "Hello, Serial!") {
+        error!("Failed to send message: {}", e);
+    }
 }
-
 ```
 
 ## Supported Versions

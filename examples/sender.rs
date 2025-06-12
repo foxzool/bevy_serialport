@@ -1,25 +1,22 @@
-use bevy_log::info;
 use bevy::app::ScheduleRunnerPlugin;
 use std::time::Duration;
 
 use bevy::prelude::*;
-use bevy_log::LogPlugin;
-use bytes::Bytes;
-use clap::Parser;
-
+use bevy_log::{error, info, LogPlugin};
 use bevy_serialport::{
     DataBits, FlowControl, Parity, SerialData, SerialPortPlugin, SerialPortRuntime,
     SerialPortSetting, SerialResource, StopBits,
 };
+use clap::Parser;
 
 #[derive(Parser, Resource, Debug)]
 #[clap(author, version, about, long_about = None)]
 struct Args {
-    /// Name of the person to greet
+    /// Serial port name (e.g., COM1, /dev/ttyUSB0)
     #[clap(short, long, value_parser)]
     port: String,
 
-    /// Number of times to greet
+    /// Baud rate for serial communication
     #[clap(short, long, value_parser, default_value_t = 115_200)]
     rate: u32,
 }
@@ -41,27 +38,52 @@ fn main() {
         .run();
 }
 
+/// Setup the serial port with custom configuration
 fn setup(cmd_args: Res<Args>, mut serial_res: ResMut<SerialResource>, rt: Res<SerialPortRuntime>) {
-    let serial_setting = SerialPortSetting {
-        port_name: cmd_args.port.clone(),
-        baud_rate: cmd_args.rate,
-        data_bits: DataBits::Five,
-        flow_control: FlowControl::None,
-        parity: Parity::None,
-        stop_bits: StopBits::One,
-        timeout: Default::default(),
-    };
-    serial_res
-        .open_with_setting(rt.clone(), serial_setting)
-        .expect("open serial port error");
-}
+    let serial_setting = SerialPortSetting::new(&cmd_args.port, cmd_args.rate)
+        .with_data_bits(DataBits::Eight)
+        .with_flow_control(FlowControl::None)
+        .with_parity(Parity::None)
+        .with_stop_bits(StopBits::One);
 
-fn receive(mut serial_ev: EventReader<SerialData>) {
-    for message in serial_ev.read() {
-        info!("receive {:?}", message);
+    match serial_res.open_with_setting(rt.clone(), serial_setting) {
+        Ok(_) => info!("Successfully opened serial port: {}", cmd_args.port),
+        Err(e) => {
+            error!("Failed to open serial port: {}", e);
+            std::process::exit(1);
+        }
     }
 }
 
-fn send_test_data(mut serial_res: ResMut<SerialResource>, cmd_args: Res<Args>) {
-    serial_res.send_message(&cmd_args.port, Bytes::from(&b"123457"[..]))
+/// Receive and log incoming data
+fn receive(mut serial_ev: EventReader<SerialData>) {
+    for message in serial_ev.read() {
+        info!(
+            "Received from {}: {}",
+            message.port,
+            message.as_string_lossy()
+        );
+    }
+}
+
+/// Send test data periodically
+fn send_test_data(
+    mut serial_res: ResMut<SerialResource>,
+    cmd_args: Res<Args>,
+    time: Res<Time>,
+    mut last_send: Local<f32>,
+) {
+    // Send test data every 2 seconds
+    let elapsed = time.elapsed().as_secs_f32();
+    if elapsed - *last_send > 2.0 {
+        let test_message = format!("Test message at {:.2}s\n", elapsed);
+
+        if let Err(e) = serial_res.send_string(&cmd_args.port, &test_message) {
+            error!("Failed to send test message: {}", e);
+        } else {
+            info!("Sent test message: {}", test_message.trim());
+        }
+
+        *last_send = elapsed;
+    }
 }

@@ -1,7 +1,7 @@
 use std::time::Duration;
 
 use bevy::{app::ScheduleRunnerPlugin, prelude::*};
-use bevy_log::{info, LogPlugin};
+use bevy_log::{error, info, LogPlugin};
 use clap::Parser;
 
 use bevy_serialport::{SerialData, SerialPortPlugin, SerialPortRuntime, SerialResource};
@@ -9,11 +9,11 @@ use bevy_serialport::{SerialData, SerialPortPlugin, SerialPortRuntime, SerialRes
 #[derive(Parser, Resource, Debug)]
 #[clap(author, version, about, long_about = None)]
 struct Args {
-    /// Name of the person to greet
+    /// Serial port name (e.g., COM1, /dev/ttyUSB0)
     #[clap(short, long, value_parser)]
     port: String,
 
-    /// Number of times to greet
+    /// Baud rate for serial communication
     #[clap(short, long, value_parser, default_value_t = 115_200)]
     rate: u32,
 }
@@ -35,16 +35,29 @@ fn main() {
         .run();
 }
 
+/// Setup the serial port connection
 fn setup(cmd_args: Res<Args>, mut serial_res: ResMut<SerialResource>, rt: Res<SerialPortRuntime>) {
-    serial_res
-        .open(rt.clone(), &cmd_args.port, cmd_args.rate)
-        .expect("open serial port error");
+    match serial_res.open(rt.clone(), &cmd_args.port, cmd_args.rate) {
+        Ok(_) => info!("Successfully opened serial port: {}", cmd_args.port),
+        Err(e) => {
+            error!("Failed to open serial port: {}", e);
+            std::process::exit(1);
+        }
+    }
 }
 
-/// receive data and send back
+/// Receive data and echo it back
 fn receive(mut serial_res: ResMut<SerialResource>, mut serial_ev: EventReader<SerialData>) {
     for message in serial_ev.read() {
-        info!("receive {:?}", message);
-        serial_res.send_message(&message.port, message.data.clone());
+        info!(
+            "Received from {}: {:?}",
+            message.port,
+            message.as_string_lossy()
+        );
+
+        // Echo the received data back
+        if let Err(e) = serial_res.send_message(&message.port, message.data.clone()) {
+            error!("Failed to send echo: {}", e);
+        }
     }
 }
