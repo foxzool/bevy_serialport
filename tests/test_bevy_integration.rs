@@ -42,8 +42,8 @@ mod receive_or_panic_bevy_app_impl {
     use bevy::{
         app::AppExit,
         prelude::{EventReader, EventWriter, Local, Res, ResMut, Resource},
-        utils::tracing::info,
     };
+    use bevy_log::info;
     use bevy_serialport::{
         DataBits, FlowControl, Parity, SerialData, SerialPortRuntime, SerialPortSetting,
         SerialResource, StopBits,
@@ -71,7 +71,7 @@ mod receive_or_panic_bevy_app_impl {
         for message in serial_ev.read().filter(|x| x.port == port_names.receiver) {
             info!("receive {:?}", message);
             // Exit the app gracefully to pass the test
-            shutdown_writer.send(AppExit::Error(NonZero::new(100).unwrap()));
+            shutdown_writer.writer(AppExit::Error(NonZero::new(100).unwrap()));
         }
     }
 
@@ -79,7 +79,7 @@ mod receive_or_panic_bevy_app_impl {
         mut serial_res: ResMut<SerialResource>,
         port_name: Res<TestPTTYPortNames>,
     ) {
-        serial_res.send_message(&port_name.sender, Bytes::from(&b"123457"[..]))
+        let _ = serial_res.send_message(&port_name.sender, Bytes::from(&b"123457"[..]));
     }
     pub(super) fn setup_receiver(
         ports: Res<TestPTTYPortNames>,
