@@ -6,6 +6,7 @@
 #[test]
 fn test_receive_bytes_send_through_serial_port_from_bevy_app() -> Result<(), String> {
     use bevy::prelude::{App, MinimalPlugins, PostStartup, Startup, Update};
+    use bevy_log::info;
     use bevy_serialport::SerialPortPlugin;
     use internal_nonsense::{run_in_background_with_deadline, with_local_serial_connected_ports};
     use receive_or_panic_bevy_app_impl::{
