@@ -13,6 +13,12 @@ use tokio_util::codec::{Decoder, Framed};
 
 use crate::{codec::RawCodec, error::SerialError, ArcRuntime, RecvQueue};
 
+// Type aliases to simplify complex types
+type FramedSerial = Framed<SerialStream, RawCodec>;
+type SerialSender = SplitSink<FramedSerial, Bytes>;
+type SerialReceiver = SplitStream<FramedSerial>;
+type SerialSplitResult = Result<(SerialSender, SerialReceiver), SerialError>;
+
 /// Configuration settings for initializing a serial port
 #[derive(Debug, Clone)]
 pub struct SerialPortSetting {
@@ -138,13 +144,7 @@ impl SerialPortWrap {
     fn initialize_serial_port(
         task_pool: &ArcRuntime,
         setting: &SerialPortSetting,
-    ) -> Result<
-        (
-            SplitSink<Framed<SerialStream, RawCodec>, Bytes>,
-            SplitStream<Framed<SerialStream, RawCodec>>,
-        ),
-        SerialError,
-    > {
+    ) -> SerialSplitResult {
         task_pool.block_on(async {
             let serial_port = tokio_serial::new(&setting.port_name, setting.baud_rate)
                 .data_bits(setting.data_bits)
@@ -165,8 +165,8 @@ impl SerialPortWrap {
     /// Spawn async handlers for send and receive operations
     fn spawn_handlers(
         task_pool: ArcRuntime,
-        mut sender: SplitSink<Framed<SerialStream, RawCodec>, Bytes>,
-        mut reader: SplitStream<Framed<SerialStream, RawCodec>>,
+        mut sender: SerialSender,
+        mut reader: SerialReceiver,
         mut message_receiver: tokio::sync::mpsc::UnboundedReceiver<Bytes>,
         recv_queue: RecvQueue,
     ) {

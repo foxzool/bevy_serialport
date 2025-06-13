@@ -10,7 +10,9 @@
 ## Usage
 
 ```rust,no_run
-use bevy::{app::ScheduleRunnerPlugin, log::LogPlugin, prelude::*};
+use bevy::prelude::*;
+use bevy_app::ScheduleRunnerPlugin;
+use bevy_log::{LogPlugin, info, error};
 use std::time::Duration;
 use bytes::Bytes;
 
