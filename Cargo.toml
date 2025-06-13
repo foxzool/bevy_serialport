@@ -37,7 +37,7 @@ tokio-util = { version = "0.7.12", features = ["codec"] }
 tokio-serial = "5.4.4"
 
 [dev-dependencies]
-bevy = { version = "0.16.0", default-features = false }
+bevy = { version = "0.16.0", default-features = false, features = ["bevy_log"] }
 clap = { version = "4.5", features = ["derive"] }
 tempdir = "0.3"
 
