@@ -71,7 +71,7 @@ mod receive_or_panic_bevy_app_impl {
         for message in serial_ev.read().filter(|x| x.port == port_names.receiver) {
             info!("receive {:?}", message);
             // Exit the app gracefully to pass the test
-            shutdown_writer.writer(AppExit::Error(NonZero::new(100).unwrap()));
+            shutdown_writer.write(AppExit::Error(NonZero::new(100).unwrap()));
         }
     }
 
