@@ -49,24 +49,21 @@ jobs:
           echo "C:\msys64\mingw32\bin" >> $GITHUB_PATH
 
       - name: Build | checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Build | install toolchain
-        uses: actions-rs/toolchain@v1
+        uses: dtolnay/rust-toolchain@stable
         with:
-          profile: minimal
-          target: ${{ inputs.target }}
           toolchain: ${{ inputs.toolchain }}
-          default: true
+      
+      - name: Add target
+        run: rustup target add ${{ inputs.target }}
 
       - name: Build | rust-cache
-        uses: Swatinem/rust-cache@v1
+        uses: Swatinem/rust-cache@v2
 
       - name: Build | build library (default features)
-        uses: actions-rs/cargo@v1
-        with:
-          command: build
-          args: --target=${{ inputs.target }}
+        run: cargo build --target=${{ inputs.target }}
 
       - name: Build | build examples (all features)
         run: cargo build --examples --all-features --target=${{ inputs.target }}
@@ -76,4 +73,4 @@ jobs:
 
       - name: Build | run tests (all features)
         if: ${{ inputs.disable_tests == false }}
-        run: cargo test --all-features --target=${{ inputs.target }} ${{ inputs.tespec }} -- --nocapture
+        run: cargo test --all-features --target=${{ inputs.target }} ${{ inputs.testspec }} -- --nocapture
