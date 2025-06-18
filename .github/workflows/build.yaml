@@ -43,7 +43,7 @@ jobs:
           sudo apt-get -qq -y install build-essential curl git pkg-config ${{ inputs.extra_packages }}
 
       - name: Build | add mingw32 to path
-        if: inputs.runs_on == 'windows-2019'
+        if: startsWith(inputs.runs_on, 'windows')
         shell: bash
         run: |
           echo "C:\msys64\mingw32\bin" >> $GITHUB_PATH
@@ -73,4 +73,4 @@ jobs:
 
       - name: Build | run tests (all features)
         if: ${{ inputs.disable_tests == false }}
-        run: cargo test --all-features --target=${{ inputs.target }} ${{ inputs.testspec }} -- --nocapture
+        run: cargo test --all-features --target=${{ inputs.target }} ${{ inputs.testspec }} --lib --bins --tests -- --nocapture

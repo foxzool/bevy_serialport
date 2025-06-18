@@ -44,7 +44,7 @@ jobs:
   x86_64-pc-windows-msvc:
     uses: ./.github/workflows/build.yaml
     with:
-      runs_on: windows-2019
+      runs_on: windows-latest
       target: x86_64-pc-windows-msvc
       testspec: unit_tests
 
