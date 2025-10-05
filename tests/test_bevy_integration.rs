@@ -42,7 +42,7 @@ fn test_receive_bytes_send_through_serial_port_from_bevy_app() -> Result<(), Str
 mod receive_or_panic_bevy_app_impl {
     use bevy::{
         app::AppExit,
-        prelude::{EventReader, EventWriter, Local, Res, ResMut, Resource},
+        prelude::{MessageReader, MessageWriter, Local, Res, ResMut, Resource},
     };
     use bevy_log::info;
     use bevy_serialport::{
@@ -58,8 +58,8 @@ mod receive_or_panic_bevy_app_impl {
     }
     /// Shutdown when we receive a response
     pub(super) fn poll_serial_messages_10_times_exit_app_if_found_else_panic(
-        mut serial_ev: EventReader<SerialData>,
-        mut shutdown_writer: EventWriter<AppExit>,
+        mut serial_ev: MessageReader<SerialData>,
+        mut shutdown_writer: MessageWriter<AppExit>,
         port_names: Res<TestPTTYPortNames>,
         mut n_times_polled: Local<u8>,
     ) {

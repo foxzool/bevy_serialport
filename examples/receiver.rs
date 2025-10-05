@@ -47,7 +47,7 @@ fn setup(cmd_args: Res<Args>, mut serial_res: ResMut<SerialResource>, rt: Res<Se
 }
 
 /// Receive data and echo it back
-fn receive(mut serial_res: ResMut<SerialResource>, mut serial_ev: EventReader<SerialData>) {
+fn receive(mut serial_res: ResMut<SerialResource>, mut serial_ev: MessageReader<SerialData>) {
     for message in serial_ev.read() {
         info!(
             "Received from {}: {:?}",

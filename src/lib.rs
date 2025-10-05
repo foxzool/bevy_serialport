@@ -35,13 +35,13 @@ impl Plugin for SerialPortPlugin {
 
         app.insert_resource(tokio_rt)
             .init_resource::<SerialResource>()
-            .add_event::<SerialData>()
+            .add_message::<SerialData>()
             .add_systems(PreUpdate, broadcast_serial_message);
     }
 }
 
-/// Event containing serial port data received
-#[derive(Debug, Event)]
+/// Message containing serial port data received
+#[derive(Debug, Message)]
 pub struct SerialData {
     /// The port name that received the data
     pub port: String,
@@ -188,7 +188,7 @@ impl SerialResource {
 /// Optimized to avoid unnecessary allocations and clones
 fn broadcast_serial_message(
     mut serial_res: ResMut<SerialResource>,
-    mut message_ev: EventWriter<SerialData>,
+    mut message_ev: MessageWriter<SerialData>,
 ) {
     // Collect all messages directly without intermediate vectors
     let messages: Vec<SerialData> = serial_res

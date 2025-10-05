@@ -69,7 +69,7 @@ fn setup_multiple_ports(mut serial_res: ResMut<SerialResource>, rt: Res<SerialPo
 }
 
 /// Handle incoming serial data with enhanced processing
-fn handle_serial_data(mut serial_ev: EventReader<SerialData>) {
+fn handle_serial_data(mut serial_ev: MessageReader<SerialData>) {
     for data in serial_ev.read() {
         info!("Port {}: received {} bytes", data.port, data.len());
 

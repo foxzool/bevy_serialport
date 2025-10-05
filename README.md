@@ -26,7 +26,7 @@ Add this to your `Cargo.toml`:
 ```toml
 [dependencies]
 bevy_serialport = "0.9"
-bevy = "0.16"
+bevy = "0.17"
 ```
 
 ## Basic Usage
@@ -58,7 +58,7 @@ fn setup_serial(
 }
 
 fn handle_serial_data(
-    mut serial_events: EventReader<SerialData>,
+    mut serial_events: MessageReader<SerialData>,
     mut serial_res: ResMut<SerialResource>,
 ) {
     for event in serial_events.read() {
@@ -136,7 +136,7 @@ fn setup_multiple_ports(
     }
 }
 
-fn handle_multiple_ports(mut serial_events: EventReader<SerialData>) {
+fn handle_multiple_ports(mut serial_events: MessageReader<SerialData>) {
     for event in serial_events.read() {
         match event.port.as_str() {
             "/dev/ttyUSB0" => handle_sensor_data(&event),
@@ -180,7 +180,7 @@ fn robust_serial_setup(
 The `SerialData` event provides convenient methods for data access:
 
 ```rust
-fn process_serial_data(mut events: EventReader<SerialData>) {
+fn process_serial_data(mut events: MessageReader<SerialData>) {
     for event in events.read() {
         // Get data as string (lossy conversion)
         let text = event.as_string_lossy();
@@ -223,6 +223,7 @@ The repository includes several examples:
 
 | Bevy Version | bevy_serialport Version |
 |--------------|-------------------------|
+| 0.17         | 0.9                     |
 | 0.16         | 0.9                     |
 | 0.15         | 0.8                     |
 | 0.14         | 0.7                     |
