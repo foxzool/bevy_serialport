@@ -19,13 +19,13 @@ Before releasing, ensure that:
 2. **Commit Changes**: Commit any final changes
 3. **Create and Push Tag**: Create a tag with the version number
    ```bash
-   git tag v0.9.2
-   git push origin v0.9.2
+   git tag v0.10.0
+   git push origin v0.10.0
    ```
 
 ## Automated Process
 
-When you push a tag (e.g., `v0.9.2`), the GitHub Actions workflow will:
+When you push a tag (e.g., `v0.10.0`), the GitHub Actions workflow will:
 
 1. **Run Tests**: Execute the full test suite to ensure code quality
 2. **Create GitHub Release**: 

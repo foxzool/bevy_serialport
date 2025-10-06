@@ -25,7 +25,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-bevy_serialport = "0.9"
+bevy_serialport = "0.10"
 bevy = "0.17"
 ```
 
@@ -223,7 +223,7 @@ The repository includes several examples:
 
 | Bevy Version | bevy_serialport Version |
 |--------------|-------------------------|
-| 0.17         | 0.9                     |
+| 0.17         | 0.10                    |
 | 0.16         | 0.9                     |
 | 0.15         | 0.8                     |
 | 0.14         | 0.7                     |

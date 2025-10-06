@@ -358,7 +358,7 @@ What actually happened.
 **Environment**
 - OS: [e.g., Windows 10, Ubuntu 20.04, macOS 12.0]
 - Rust version: [e.g., 1.70.0]
-- bevy_serialport version: [e.g., 0.9.0]
+- bevy_serialport version: [e.g., 0.10.0]
 - Serial hardware: [e.g., Arduino Uno, USB-to-Serial adapter]
 
 **Additional Context**
