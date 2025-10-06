@@ -18,7 +18,7 @@ on:
         required: true
         type: string
       toolchain:
-        default: nightly  # Bevy requires the nightly toolchain
+        default: stable  # Bevy 0.17+ works with stable toolchain
         type: string
         description: "Rustup build toolchain: https://rust-lang.github.io/rustup/concepts/toolchains.html"
       testspec:

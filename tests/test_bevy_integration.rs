@@ -42,7 +42,7 @@ fn test_receive_bytes_send_through_serial_port_from_bevy_app() -> Result<(), Str
 mod receive_or_panic_bevy_app_impl {
     use bevy::{
         app::AppExit,
-        prelude::{MessageReader, MessageWriter, Local, Res, ResMut, Resource},
+        prelude::{Local, MessageReader, MessageWriter, Res, ResMut, Resource},
     };
     use bevy_log::info;
     use bevy_serialport::{
