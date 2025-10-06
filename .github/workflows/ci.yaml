@@ -37,7 +37,7 @@ jobs:
         run: cargo fmt -- --check
 
       - name: Lint | clippy
-        run: cargo clippy --all-targets --all-features
+        run: cargo clippy --all-targets --all-features -- -D warnings
 
   # --------------------------------------------------------------------------
   # BUILD
@@ -47,9 +47,12 @@ jobs:
       runs_on: windows-latest
       target: x86_64-pc-windows-msvc
       testspec: unit_tests
+      disable_tests: false
 
   x86_64-unknown-linux-gnu:
     uses: ./.github/workflows/build.yaml
     with:
       extra_packages: libudev-dev socat
       target: x86_64-unknown-linux-gnu
+      testspec: unit_tests
+      disable_tests: false
