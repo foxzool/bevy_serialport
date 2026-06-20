@@ -21,11 +21,11 @@ rustdoc-args = ["--cfg", "docsrs"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-bevy_app = { version = "0.19.0-rc.2" }
-bevy_ecs = { version = "0.19.0-rc.2"}
-bevy_log = { version = "0.19.0-rc.2" }
-bevy_derive = { version = "0.19.0-rc.2" }
-bevy_utils = { version = "0.19.0-rc.2" }
+bevy_app = { version = "0.19.0" }
+bevy_ecs = { version = "0.19.0"}
+bevy_log = { version = "0.19.0" }
+bevy_derive = { version = "0.19.0" }
+bevy_utils = { version = "0.19.0" }
 bytes = "1.8"
 futures = "0.3"
 parking_lot = { version = "0.12" }
@@ -36,7 +36,7 @@ tokio-util = { version = "0.7.12", features = ["codec"] }
 tokio-serial = "5.4.5"
 
 [dev-dependencies]
-bevy = { version = "0.19.0-rc.2", default-features = false, features = ["bevy_log"] }
+bevy = { version = "0.19.0", default-features = false, features = ["bevy_log"] }
 clap = { version = "4.5", features = ["derive"] }
 tempdir = "0.3"
 

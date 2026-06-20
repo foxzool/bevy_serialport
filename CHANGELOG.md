@@ -5,16 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.12.0] - 2026-05-14
+## [0.12.0] - 2026-06-20
 
 ### Changed
-- Upgrade to Bevy 0.19.0-rc.1
-- Updated all Bevy dependencies to 0.19.0-rc.1 compatible versions
-  - bevy_app: 0.19.0-rc.1
-  - bevy_ecs: 0.19.0-rc.1
-  - bevy_log: 0.19.0-rc.1
-  - bevy_derive: 0.19.0-rc.1
-  - bevy_utils: 0.19.0-rc.1
+- Upgrade to Bevy 0.19.0 (stable)
+- Updated all Bevy dependencies to 0.19.0 compatible versions
+  - bevy_app: 0.19.0
+  - bevy_ecs: 0.19.0
+  - bevy_log: 0.19.0
+  - bevy_derive: 0.19.0
+  - bevy_utils: 0.19.0
 - Bump crate version to 0.12.0
 
 ### Compatibility
@@ -23,8 +23,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Verified
 - ✅ All unit tests pass
-- ✅ `cargo check --all-targets` passes
-- ✅ `cargo clippy --all-targets -- -D warnings` passes
+- ✅ `cargo build --all-features` passes
+- ✅ `cargo clippy --all-targets --all-features -- -D warnings` passes
+- ✅ Examples compile
 
 ## [0.11.0] - 2026-01-14
 
