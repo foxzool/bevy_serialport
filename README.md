@@ -25,8 +25,8 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-bevy_serialport = "0.12"
-bevy = "0.19"
+bevy_serialport = { git = "https://github.com/foxzool/bevy_serialport", branch = "codex/bevy-0.20-rc2" }
+bevy = "=0.20.0-rc.2"
 ```
 
 ## Basic Usage
@@ -223,6 +223,7 @@ The repository includes several examples:
 
 | Bevy Version | bevy_serialport Version |
 |--------------|-------------------------|
+| 0.20.0-rc.2  | main (unreleased)       |
 | 0.19         | 0.12                    |
 | 0.18         | 0.11                    |
 | 0.17         | 0.10                    |
