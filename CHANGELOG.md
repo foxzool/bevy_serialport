@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - bevy_utils: 0.20.0
 - Bump crate version to 0.13.0
 - Adjusted the Linux integration test for Clippy on current stable (`unused_imports`, `expect_fun_call`, `useless_conversion`)
+- README examples now compile as crate doc tests (`cargo test --doc`); the quick-start sample is `no_run` because it calls `App::run()`
 
 ### Compatibility
 - **Bevy 0.19**: `bevy_serialport` 0.12.0
