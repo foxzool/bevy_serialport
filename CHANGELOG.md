@@ -5,6 +5,29 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.13.0] - 2026-10-09
+
+### Changed
+- Upgrade to Bevy 0.20.0 (stable)
+- Updated all Bevy dependencies to 0.20.0
+  - bevy_app: 0.20.0
+  - bevy_ecs: 0.20.0
+  - bevy_log: 0.20.0
+  - bevy_derive: 0.20.0
+  - bevy_utils: 0.20.0
+- Bump crate version to 0.13.0
+- Adjusted the Linux integration test for Clippy on current stable (`unused_imports`, `expect_fun_call`, `useless_conversion`)
+
+### Compatibility
+- **Bevy 0.19**: `bevy_serialport` 0.12.0
+- **Bevy 0.20**: `bevy_serialport` 0.13.0
+
+### Verified
+- ✅ All unit tests pass
+- ✅ `cargo build --all-features` passes
+- ✅ `cargo clippy --all-targets --all-features -- -D warnings` passes
+- ✅ Examples compile
+
 ## [0.12.0] - 2026-06-20
 
 ### Changed
