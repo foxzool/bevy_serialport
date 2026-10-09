@@ -25,13 +25,13 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-bevy_serialport = "0.12"
-bevy = "0.19"
+bevy_serialport = "0.13"
+bevy = "0.20"
 ```
 
 ## Basic Usage
 
-```rust
+```rust,no_run
 use bevy::prelude::*;
 use bevy_serialport::{SerialData, SerialPortPlugin, SerialResource, SerialPortRuntime};
 use std::time::Duration;
@@ -73,8 +73,9 @@ fn handle_serial_data(
 ## Advanced Configuration
 
 ```rust
+use bevy::prelude::*;
 use bevy_serialport::{
-    SerialPortSetting, DataBits, FlowControl, Parity, StopBits
+    DataBits, FlowControl, Parity, SerialPortRuntime, SerialPortSetting, SerialResource, StopBits,
 };
 use std::time::Duration;
 
@@ -99,6 +100,7 @@ fn setup_advanced_serial(
 ## Port Discovery
 
 ```rust
+use bevy::prelude::*;
 use bevy_serialport::utils::*;
 
 fn discover_ports() {
@@ -117,6 +119,13 @@ fn discover_ports() {
 ## Multiple Ports
 
 ```rust
+use bevy::prelude::*;
+use bevy_serialport::{SerialData, SerialPortRuntime, SerialResource};
+
+fn handle_sensor_data(_event: &SerialData) {}
+fn handle_gps_data(_event: &SerialData) {}
+fn handle_debug_data(_event: &SerialData) {}
+
 fn setup_multiple_ports(
     mut serial_res: ResMut<SerialResource>,
     rt: Res<SerialPortRuntime>
@@ -153,7 +162,8 @@ fn handle_multiple_ports(mut serial_events: MessageReader<SerialData>) {
 The library provides comprehensive error handling:
 
 ```rust
-use bevy_serialport::SerialError;
+use bevy::prelude::*;
+use bevy_serialport::{SerialError, SerialPortRuntime, SerialResource};
 
 fn robust_serial_setup(
     mut serial_res: ResMut<SerialResource>,
@@ -180,6 +190,9 @@ fn robust_serial_setup(
 The `SerialData` event provides convenient methods for data access:
 
 ```rust
+use bevy::prelude::*;
+use bevy_serialport::SerialData;
+
 fn process_serial_data(mut events: MessageReader<SerialData>) {
     for event in events.read() {
         // Get data as string (lossy conversion)
@@ -223,6 +236,7 @@ The repository includes several examples:
 
 | Bevy Version | bevy_serialport Version |
 |--------------|-------------------------|
+| 0.20         | 0.13                    |
 | 0.19         | 0.12                    |
 | 0.18         | 0.11                    |
 | 0.17         | 0.10                    |

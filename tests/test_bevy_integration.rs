@@ -6,7 +6,6 @@
 #[test]
 fn test_receive_bytes_send_through_serial_port_from_bevy_app() -> Result<(), String> {
     use bevy::prelude::{App, MinimalPlugins, PostStartup, Startup, Update};
-    use bevy_log::info;
     use bevy_serialport::SerialPortPlugin;
     use internal_nonsense::{run_in_background_with_deadline, with_local_serial_connected_ports};
     use receive_or_panic_bevy_app_impl::{
@@ -22,8 +21,8 @@ fn test_receive_bytes_send_through_serial_port_from_bevy_app() -> Result<(), Str
             // CI.
             app.add_plugins((MinimalPlugins, SerialPortPlugin))
                 .insert_resource(TestPTTYPortNames {
-                    sender: String::from(serial_port_name),
-                    receiver: String::from(serial_port_name2),
+                    sender: serial_port_name,
+                    receiver: serial_port_name2,
                 })
                 .add_systems(Startup, (setup_receiver, setup_sender))
                 .add_systems(PostStartup, send_test_data)
@@ -89,11 +88,12 @@ mod receive_or_panic_bevy_app_impl {
     ) {
         serial_res
             .open(rt.clone(), &ports.receiver, 115_200)
-            .expect(&format!(
-                "Error opening serial port. {:?}. Available ports: {:?}",
-                &ports,
-                &serial_res.ports.keys()
-            ));
+            .unwrap_or_else(|_| {
+                panic!(
+                    "Error opening serial port. {ports:?}. Available ports: {:?}",
+                    serial_res.ports.keys()
+                )
+            });
     }
     pub(super) fn setup_sender(
         ports: Res<TestPTTYPortNames>,
@@ -111,11 +111,12 @@ mod receive_or_panic_bevy_app_impl {
         };
         serial_res
             .open_with_setting(rt.clone(), serial_setting)
-            .expect(&format!(
-                "Error opening serial port. {:?}. Available ports: {:?}",
-                &ports,
-                &serial_res.ports.keys()
-            ));
+            .unwrap_or_else(|_| {
+                panic!(
+                    "Error opening serial port. {ports:?}. Available ports: {:?}",
+                    serial_res.ports.keys()
+                )
+            });
     }
 }
 
@@ -149,7 +150,7 @@ mod internal_nonsense {
         {
             Ok(_) => match handle.join() {
                 Ok(h) => h,
-                Err(_) => Err(format!("Uncaught exception")),
+                Err(_) => Err("Uncaught exception".to_string()),
             },
             Err(e) => Err(e),
         }
